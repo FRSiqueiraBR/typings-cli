@@ -2,37 +2,25 @@ import click
 import random
 import pyfiglet
 
-def typing_test():
+@click.command()
+def start():
     generate_ascii()
+    typing_test()
 
+
+def typing_test():
     word_count = click.prompt('Words')
     text = generate_text(word_count)
 
     if click.confirm('Are yo READY?', abort=True):
-        typing = click.promt('Typing Test')
+        typing = click.prompt('Typing Test')
 
-        click.secho(text, fg='red')
-        click.secho(typing, fg='green')
+        compare_text_with_typing_test(text, typing)
 
-
-@click.command()
-def start():
-    generate_ascii()
-
-    word_count = click.prompt('Words')
-
-    text = generate_text(word_count)
-
-    if click.confirm('Are you READY?', abort=True):
-        typing_test = click.prompt('Typing Test')
-
-        click.secho(text, fg='red')
-        click.secho(typing_test, fg='green')
-
-        text_list = text.split(" ")
-        typing_text_list = typing_test
-        print(typing_text_list)
-        #click.secho(overlapping_percentage(text_list, typing_text_list))
+        redo = click.confirm('REDO?')
+        while redo: 
+            typing_test()
+            redo = click.confirm('REDO?')
 
 
 def generate_ascii():
@@ -76,13 +64,19 @@ def generate_text(word_count):
     text = separator.join(text)
 
     click.echo(text)
-
+    
+    #click.echo(click.get_terminal_size())
     return text
 
 
 def overlapping_percentage(text, typing_test):
     print(len(set(text) & set(typing_test)))
     return (100.0 * len(set(text) & set(typing_test))) / len(set(text) | set(typing_test))
+
+
+def compare_text_with_typing_test(text, typing): 
+    click.secho(text, fg='red')
+    click.secho(typing, fg='green')
 
 
 if __name__ == '__main__':
